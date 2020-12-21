@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "mocha --config .mocharc.json --watch src/**/*.test.ts",
     "lint": "eslint src/**/*.ts --fix",
