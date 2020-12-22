@@ -12,10 +12,10 @@
   "scripts": {
     "test": "mocha --config .mocharc.json --watch src/**/*.test.ts",
     "lint": "eslint src/**/*.ts --fix",
-    "build": "rimraf ./build && tsc --build tsconfig.prod.json",
+    "build": "rimraf ./dist && tsc --build tsconfig.prod.json",
     "start": "npm run start:dev",
     "start:dev": "nodemon --config .nodemonrc.json src/index.ts",
-    "start:prod": "npm run build && node build/index.js"
+    "start:prod": "npm run build && node dist/index.js"
   },
   "keywords": ["javascript", "js", "revive", "deserializer", "unmarshal"],
   "license": "MIT",
