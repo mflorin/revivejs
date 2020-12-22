@@ -11,7 +11,7 @@ export const defaultMarshalOptions: MarshalOptions = {
 }
 
 export interface MarshalConstructor {
-  new (...args: never[]): never;
+  new (...args: any[]): any;
 }
 
 export interface MarshalDetailedSchema {
