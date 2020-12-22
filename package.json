@@ -1,7 +1,7 @@
 {
-  "name": "tmp",
+  "name": "revivejs",
   "version": "1.0.0",
-  "description": "",
+  "description": "Javascript json deserializer library for reviving objects along with their prototype/behavior.",
   "main": "index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -14,7 +14,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@types/chai": "^4.2.14",
     "@types/mocha": "^8.2.0",
