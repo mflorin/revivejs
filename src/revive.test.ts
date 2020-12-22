@@ -260,5 +260,4 @@ describe('revive tests', () => {
     const data = 'true'
     assert.throw(() => revive(data, Number), 'expected schema type to be Boolean, got Number')
   })
-  
 })
