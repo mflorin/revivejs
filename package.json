@@ -2,7 +2,7 @@
   "name": "revivejs",
   "version": "1.0.0",
   "description": "Javascript json deserializer library for reviving objects along with their prototype/behavior.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Florin Mihalache <florin.mihalache@gmail.com>",
   "repository": {
@@ -17,6 +17,7 @@
     "start:dev": "nodemon --config .nodemonrc.json src/index.ts",
     "start:prod": "npm run build && node dist/index.js"
   },
+  "files": [ "dist/**/*" ],
   "keywords": ["javascript", "js", "revive", "deserializer", "unmarshal"],
   "license": "MIT",
   "devDependencies": {
