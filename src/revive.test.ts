@@ -197,4 +197,68 @@ describe('revive tests', () => {
     assert.equal(obj.getFriends()[1].getJob().getTitle(), friend2JobTitle)
   })
 
+  it('should throw an error on missing properties', () => {
+
+    const data = '{ "name": "John" }'
+
+    class Person {
+      name = ''
+      age = 0
+    }
+
+    assert.throw(() => revive(data, Person, { failOnMissingFields: true }),
+      'field age not found in serialized data')
+  })
+
+  it('should throw an error on unknown properties', () => {
+    const data= '{ "name": "John", "foo": "bar" }'
+    class Person {
+      name = ''
+      age = 0
+    }
+
+    assert.throw(() => revive(data, Person, { failOnUnknownFields: true }),
+      'unknown field foo in serialized data')
+  })
+
+  it('should throw an error when deserializing root array types', () => {
+    const data = '[1, 2, 3]'
+    assert.throw(() => revive(data, Number), 'expected object, got array')
+  })
+
+  it('should deserialize root number', () => {
+    const data = '123'
+    assert.equal(revive(data, Number), 123)
+  })
+
+  it('should throw an error when deserializing root number into something else', () => {
+    const data = '123'
+    assert.throw(() => revive(data, String), 'expected schema type to be Number, got String')
+  })
+
+  it('should deserialize root string', () => {
+    const data = '"foo"'
+    assert.equal(revive(data, String), 'foo')
+  })
+
+  it('should throw an error when deserializing root string into something else', () => {
+    const data = '"foo"'
+    assert.throw(() => revive(data, Number), 'expected schema type to be String, got Number')
+  })
+
+  it('should deserialize root boolean', () => {
+    const data = 'true'
+    assert.equal(revive(data, Boolean), true)
+  })
+
+  it('should throw an error when deserializing root boolean into something else', () => {
+    const data = 'true'
+    assert.throw(() => revive(data, Number), 'expected schema type to be Boolean, got Number')
+  })
+
+  it('should throw an error when deserializing root boolean into something else', () => {
+    const data = 'true'
+    assert.throw(() => revive(data, Number), 'expected schema type to be Boolean, got Number')
+  })
+  
 })

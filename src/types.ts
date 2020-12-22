@@ -1,13 +1,13 @@
 export interface ReviveOptions {
-  failOnUnknownFields: boolean;
-  failOnMissingFields: boolean;
-  createObjects: boolean;
+  failOnUnknownFields?: boolean;
+  failOnMissingFields?: boolean;
+  assignOnly?: boolean;
 }
 
 export const defaultReviveOptions: ReviveOptions = {
   failOnUnknownFields: false,
   failOnMissingFields: false,
-  createObjects: true,
+  assignOnly: false,
 }
 
 export interface ReviveConstructor {

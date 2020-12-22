@@ -64,48 +64,74 @@ function reviveObjectAny(data: any, schema: ReviveObjectSchema, options: ReviveO
 
   const constructor = schema.type
 
-  if (options.createObjects) {
-    ret = new constructor()
-
-    /* assign values */
-    const retProps = Object.getOwnPropertyNames(ret)
-    for (const prop of retProps) {
-
-      if (data[prop] === undefined) {
-        if (options.failOnMissingFields) {
-          throw new TypeError(`field ${prop} not found in serialized data`)
-        }
-        continue
-      }
-
-      if (typeof data[prop] !== 'object') {
-        ret[prop] = data[prop]
-        continue
-      }
-
-      if (schema.properties[prop] !== undefined) {
-        ret[prop] = reviveAny(data[prop], schema.properties[prop], options)
-      } else {
-        ret[prop] = data[prop]
-      }
-
-    }
-
-    if (options.failOnUnknownFields) {
-      /* check if we have fields in serialized data that don't belong to the object */
-      for (const field of Object.keys(data)) {
-        if (!retProps.includes(field)) {
-          throw new TypeError(`unknown field ${field} in serialized data`)
-        }
-      }
-    }
-
-
-  } else {
-    /* just set the prototype */
+  if (options.assignOnly) {
     ret = data
-    Object.setPrototypeOf(ret, constructor.prototype)
+    return Object.setPrototypeOf(ret, constructor.prototype)
   }
+
+  switch(typeof data) {
+  case 'number':
+    if (schema.type !== Number) {
+      throw new TypeError(`expected schema type to be Number, got ${schema.type.name}`)
+    }
+    return data
+  case 'bigint':
+    if (schema.type !== Number) {
+      throw new TypeError(`expected schema type to be Number, got ${schema.type.name}`)
+    }
+    return data
+  case 'boolean':
+    if (schema.type !== Boolean) {
+      throw new TypeError(`expected schema type to be Boolean, got ${schema.type.name}`)
+    }
+    return data
+  case 'function':
+    throw new TypeError('`function` is not supported')
+  case 'string':
+    if (schema.type !== String) {
+      throw new TypeError(`expected schema type to be String, got ${schema.type.name}`)
+    }
+    return data
+  case 'symbol':
+    throw new TypeError('`symbol` is not supported')
+  case 'undefined':
+    return data
+  }
+
+  if (Array.isArray(data)) {
+    throw new TypeError('expected object, got array')
+  }
+
+  ret = new constructor()
+
+  /* assign values */
+  const retProps = Object.getOwnPropertyNames(ret)
+  for (const prop of retProps) {
+
+    if (data[prop] === undefined) {
+      if (options.failOnMissingFields) {
+        throw new TypeError(`field ${prop} not found in serialized data`)
+      }
+      continue
+    }
+
+    if (schema.properties[prop] !== undefined) {
+      ret[prop] = reviveAny(data[prop], schema.properties[prop], options)
+    } else {
+      ret[prop] = data[prop]
+    }
+
+  }
+
+  if (options.failOnUnknownFields) {
+    /* check if we have fields in serialized data that don't belong to the object */
+    for (const field of Object.keys(data)) {
+      if (!retProps.includes(field)) {
+        throw new TypeError(`unknown field ${field} in serialized data`)
+      }
+    }
+  }
+
 
   return ret
 }
