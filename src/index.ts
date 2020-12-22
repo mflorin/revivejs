@@ -1,1 +1,1 @@
-export { MarshalOptions, defaultMarshalOptions, MarshalConstructor, MarshalSchema, MarshalDetailedSchema } from './types'
+export { MarshalOptions, defaultMarshalOptions, MarshalConstructor, MarshalSchema, MarshalObjectSchema } from './types'

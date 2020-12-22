@@ -14,9 +14,17 @@ export interface MarshalConstructor {
   new (...args: any[]): any;
 }
 
-export interface MarshalDetailedSchema {
+export interface MarshalObjectSchema {
   type: MarshalConstructor;
   properties: { [key: string]: MarshalSchema }
 }
 
-export type MarshalSchema = MarshalConstructor | MarshalDetailedSchema
+export interface MarshalArraySchema {
+  items: MarshalSchema
+}
+
+export type MarshalSchema = MarshalConstructor | MarshalObjectSchema | MarshalArraySchema
+
+export interface MarshalSchemaProvider {
+  getMarshalSchema(): MarshalSchema
+}
