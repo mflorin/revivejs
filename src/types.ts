@@ -1,30 +1,30 @@
-export interface MarshalOptions {
+export interface ReviveOptions {
   failOnUnknownFields: boolean;
   failOnMissingFields: boolean;
   createObjects: boolean;
 }
 
-export const defaultMarshalOptions: MarshalOptions = {
+export const defaultReviveOptions: ReviveOptions = {
   failOnUnknownFields: false,
   failOnMissingFields: false,
   createObjects: true,
 }
 
-export interface MarshalConstructor {
+export interface ReviveConstructor {
   new (...args: any[]): any;
 }
 
-export interface MarshalObjectSchema {
-  type: MarshalConstructor;
-  properties: { [key: string]: MarshalSchema }
+export interface ReviveObjectSchema {
+  type: ReviveConstructor;
+  properties: { [key: string]: ReviveSchema }
 }
 
-export interface MarshalArraySchema {
-  items: MarshalSchema
+export interface ReviveArraySchema {
+  items: ReviveSchema
 }
 
-export type MarshalSchema = MarshalConstructor | MarshalObjectSchema | MarshalArraySchema
+export type ReviveSchema = ReviveConstructor | ReviveObjectSchema | ReviveArraySchema
 
-export interface MarshalSchemaProvider {
-  getMarshalSchema(): MarshalSchema
+export interface ReviveSchemaProvider {
+  getReviveSchema(): ReviveSchema
 }

@@ -1,19 +1,19 @@
 import {
-  defaultMarshalOptions,
-  MarshalArraySchema,
-  MarshalConstructor,
-  MarshalObjectSchema,
-  MarshalOptions,
-  MarshalSchema, MarshalSchemaProvider,
+  defaultReviveOptions,
+  ReviveArraySchema,
+  ReviveConstructor,
+  ReviveObjectSchema,
+  ReviveOptions,
+  ReviveSchema, ReviveSchemaProvider,
 } from './types';
 
 type ParametricConstructor<T> = new(...args: any[]) => T
 
-interface ParametricObjectSchema<T> extends MarshalObjectSchema {
+interface ParametricObjectSchema<T> extends ReviveObjectSchema {
   type: ParametricConstructor<T>;
 }
 
-interface ParametricArraySchema<T> extends MarshalArraySchema {
+interface ParametricArraySchema<T> extends ReviveArraySchema {
   items: ParametricSchema<T>
 }
 
@@ -27,13 +27,13 @@ function isParametricArraySchema<T>(schema: any): schema is ParametricArraySchem
   return 'items' in schema
 }
 
-function isMarshalSchemaProvider(obj: any): obj is MarshalSchemaProvider {
-  return typeof obj['getMarshalSchema'] === 'function'
+function isReviveSchemaProvider(obj: any): obj is ReviveSchemaProvider {
+  return typeof obj['getReviveSchema'] === 'function'
 }
 
-type Unmarshalable = string | number | {[key: string]: any} | any[]
+type Revivable = string | number | {[key: string]: any} | any[]
 
-export function unmarshal<T>(data: Unmarshalable, schema: ParametricSchema<T>, options: MarshalOptions = defaultMarshalOptions): T {
+export function revive<T>(data: Revivable, schema: ParametricSchema<T>, options: ReviveOptions = defaultReviveOptions): T {
 
   let obj: any
 
@@ -43,23 +43,23 @@ export function unmarshal<T>(data: Unmarshalable, schema: ParametricSchema<T>, o
     obj = data
   }
 
-  return unmarshalAny(obj, schema, options)
+  return reviveAny(obj, schema, options)
 }
 
-function unmarshalAny(data: any, schema: MarshalSchema, options: MarshalOptions): any {
+function reviveAny(data: any, schema: ReviveSchema, options: ReviveOptions): any {
 
   if (isParametricObjectSchema(schema)) {
-    return unmarshalObjectAny(data, schema, options)
+    return reviveObjectAny(data, schema, options)
   } else {
     if (isParametricArraySchema(schema)) {
-      return unmarshalArrayAny(data, schema, options)
+      return reviveArrayAny(data, schema, options)
     } else {
-      return unmarshalConstructorAny(data, schema, options)
+      return reviveConstructorAny(data, schema, options)
     }
   }
 }
 
-function unmarshalObjectAny(data: any, schema: MarshalObjectSchema, options: MarshalOptions): any {
+function reviveObjectAny(data: any, schema: ReviveObjectSchema, options: ReviveOptions): any {
   let ret
 
   const constructor = schema.type
@@ -84,7 +84,7 @@ function unmarshalObjectAny(data: any, schema: MarshalObjectSchema, options: Mar
       }
 
       if (schema.properties[prop] !== undefined) {
-        ret[prop] = unmarshalAny(data[prop], schema.properties[prop], options)
+        ret[prop] = reviveAny(data[prop], schema.properties[prop], options)
       } else {
         ret[prop] = data[prop]
       }
@@ -110,22 +110,22 @@ function unmarshalObjectAny(data: any, schema: MarshalObjectSchema, options: Mar
   return ret
 }
 
-function unmarshalArrayAny(data: any, schema: MarshalArraySchema, options: MarshalOptions): any[] {
+function reviveArrayAny(data: any, schema: ReviveArraySchema, options: ReviveOptions): any[] {
   if (!Array.isArray(data)) {
     throw new TypeError(`expected an array, got ${typeof data}`)
   }
 
   const ret: any[] = []
   for (const item of data) {
-    ret.push(unmarshalAny(item, schema.items, options))
+    ret.push(reviveAny(item, schema.items, options))
   }
 
   return ret
 }
 
-function unmarshalConstructorAny(data: any, objConstructor: MarshalConstructor, options: MarshalOptions): any {
-  if (isMarshalSchemaProvider(objConstructor)) {
-    return unmarshalAny(data, objConstructor.getMarshalSchema(), options)
+function reviveConstructorAny(data: any, objConstructor: ReviveConstructor, options: ReviveOptions): any {
+  if (isReviveSchemaProvider(objConstructor)) {
+    return reviveAny(data, objConstructor.getReviveSchema(), options)
   }
-  return unmarshalObjectAny(data, {type: objConstructor, properties: {}}, options)
+  return reviveObjectAny(data, {type: objConstructor, properties: {}}, options)
 }

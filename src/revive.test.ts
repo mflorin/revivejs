@@ -1,9 +1,9 @@
 import { assert } from 'chai';
-import {unmarshal} from './marshal';
-import {MarshalSchema} from './types';
+import {revive} from './revive';
+import {ReviveSchema} from './types';
 
-describe('unmarshal tests', () => {
-  it('should unmarshal a simple object correctly', () => {
+describe('revive tests', () => {
+  it('should revive a simple object correctly', () => {
     const name = 'John Smith'
     const serialized = `{ "name": "${name}" }`
 
@@ -14,11 +14,11 @@ describe('unmarshal tests', () => {
       }
     }
 
-    const obj = unmarshal(serialized, Person)
+    const obj = revive(serialized, Person)
     assert.equal(obj.getName(), name)
   })
 
-  it('should unmarshal a complex object correctly', () => {
+  it('should revive a complex object correctly', () => {
 
     const name = 'John Smith'
     const jobTitle = 'Developer'
@@ -43,18 +43,18 @@ describe('unmarshal tests', () => {
       }
     }
 
-    const schema: MarshalSchema = {
+    const schema: ReviveSchema = {
       type: Person,
       properties: {
         job: Job,
       },
     }
-    const obj = unmarshal(serialized, schema)
+    const obj = revive(serialized, schema)
     assert.equal(obj.getName(), name)
     assert.equal(obj.getJob().getTitle(), jobTitle)
   })
 
-  it('should unmarshal nested schemas correctly', () => {
+  it('should revive nested schemas correctly', () => {
 
     const name = 'John Smith'
     const jobTitle = 'Developer'
@@ -88,7 +88,7 @@ describe('unmarshal tests', () => {
       }
     }
 
-    const schema: MarshalSchema = {
+    const schema: ReviveSchema = {
       type: Employee,
       properties: {
         job: {
@@ -99,14 +99,14 @@ describe('unmarshal tests', () => {
         }
       },
     }
-    const obj = unmarshal(serialized, schema)
+    const obj = revive(serialized, schema)
     assert.equal(obj.getName(), name)
     assert.equal(obj.getJob().getTitle(), jobTitle)
     assert.equal(obj.getJob().getProps().getProp1(), prop1)
   })
 
 
-  it('should unmarshal nested array schemas correctly', () => {
+  it('should revive nested array schemas correctly', () => {
 
     const name = 'John Smith'
     const jobTitle = 'Developer'
@@ -167,7 +167,7 @@ describe('unmarshal tests', () => {
         return this.friends
       }
 
-      static getMarshalSchema(): MarshalSchema {
+      static getReviveSchema(): ReviveSchema {
         return {
           type: Employee,
           properties: {
@@ -185,7 +185,7 @@ describe('unmarshal tests', () => {
       }
     }
 
-    const obj = unmarshal(serialized, Employee)
+    const obj = revive(serialized, Employee)
     assert.equal(obj.getName(), name)
     assert.equal(obj.getJob().getTitle(), jobTitle)
     assert.equal(obj.getJob().getProps().getProp1(), prop1)
