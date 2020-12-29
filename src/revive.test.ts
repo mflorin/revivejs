@@ -43,15 +43,16 @@ describe('revive tests', () => {
       }
     }
 
-    const schema: RevivalSchema = {
+    const schema: RevivalSchema<Person> = {
       type: Person,
       properties: {
         job: Job,
       },
     }
     const obj = revive(serialized, schema)
+    assert.isNotNull(obj)
     assert.equal(obj.getName(), name)
-    assert.equal(obj.getJob().getTitle(), jobTitle)
+    assert.equal(obj.getJob()?.getTitle(), jobTitle)
   })
 
   it('should revive nested schemas correctly', () => {
@@ -88,7 +89,7 @@ describe('revive tests', () => {
       }
     }
 
-    const schema: RevivalSchema = {
+    const schema: RevivalSchema<Employee> = {
       type: Employee,
       properties: {
         job: {
@@ -101,8 +102,8 @@ describe('revive tests', () => {
     }
     const obj = revive(serialized, schema)
     assert.equal(obj.getName(), name)
-    assert.equal(obj.getJob().getTitle(), jobTitle)
-    assert.equal(obj.getJob().getProps().getProp1(), prop1)
+    assert.equal(obj.getJob()?.getTitle(), jobTitle)
+    assert.equal(obj.getJob()?.getProps()?.getProp1(), prop1)
   })
 
   it('should revive arrays correctly', () => {
@@ -129,7 +130,7 @@ describe('revive tests', () => {
     }
     const list = revive(serialized, schema)
     assert.isArray(list)
-    assert.equal((list as Person[])[0].getName(), name1)
+    assert.equal(list[0].getName(), name1)
   })
 
   it('should revive nested array schemas correctly', () => {
@@ -193,7 +194,7 @@ describe('revive tests', () => {
         return this.friends
       }
 
-      static getReviveSchema(): RevivalSchema {
+      static getReviveSchema(): RevivalSchema<Employee> {
         return {
           type: Employee,
           properties: {

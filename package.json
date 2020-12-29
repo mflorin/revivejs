@@ -17,8 +17,7 @@
     "start": "npm run start:dev",
     "start:dev": "nodemon --config .nodemonrc.json src/index.ts",
     "start:prod": "npm run build && node dist/index.js",
-    "prepare": "npm run build",
-    "prepublishOnly": "npm test && npm run lint",
+    "prepublishOnly": "npm run build && npm test && npm run lint",
     "preversion": "npm test && npm run lint",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags"

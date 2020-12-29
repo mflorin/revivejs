@@ -22,10 +22,10 @@ function isSchemaProvider(obj: any): obj is RevivalSchemaProvider<any> {
 
 type Revivable = string | number | {[key: string]: any} | any[]
 
-
-export function revive<T>(data: Revivable, schema: RevivalObjectSchema<T>, options: RevivalOptions): T;
-export function revive<T>(data: Revivable, schema: RevivalArraySchema<T>, options: RevivalOptions): T[];
-export function revive<T>(data: Revivable, schema: RevivalArraySchema<T>,options: RevivalOptions = defaultReviveOptions): T {
+export function revive<T>(data: Revivable, schema: RevivalObjectSchema<T>, options?: RevivalOptions): T;
+export function revive<T>(data: Revivable, schema: RevivalArraySchema<T>, options?: RevivalOptions): T[];
+export function revive<T>(data: Revivable, schema: RevivalConstructor<T>, options?: RevivalOptions): T;
+export function revive<T>(data: Revivable, schema: RevivalSchema<T>,options: RevivalOptions = defaultReviveOptions): T {
 
   let obj: any
 
@@ -38,7 +38,7 @@ export function revive<T>(data: Revivable, schema: RevivalArraySchema<T>,options
   return reviveAny(obj, schema, options)
 }
 
-function reviveAny(data: any, schema: RevivalSchema, options: RevivalOptions): any {
+function reviveAny(data: any, schema: RevivalSchema<any>, options: RevivalOptions): any {
 
   if (isObjectSchema(schema)) {
     return reviveObjectAny(data, schema, options)
@@ -51,7 +51,7 @@ function reviveAny(data: any, schema: RevivalSchema, options: RevivalOptions): a
   }
 }
 
-function reviveObjectAny(data: any, schema: RevivalObjectSchema, options: RevivalOptions): any {
+function reviveObjectAny(data: any, schema: RevivalObjectSchema<any>, options: RevivalOptions): any {
   let ret
 
   const constructor = schema.type
@@ -128,7 +128,7 @@ function reviveObjectAny(data: any, schema: RevivalObjectSchema, options: Reviva
   return ret
 }
 
-function reviveArrayAny(data: any, schema: RevivalArraySchema, options: RevivalOptions): any[] {
+function reviveArrayAny(data: any, schema: RevivalArraySchema<any>, options: RevivalOptions): any[] {
   if (!Array.isArray(data)) {
     throw new TypeError(`expected an array, got ${typeof data}`)
   }
@@ -141,7 +141,7 @@ function reviveArrayAny(data: any, schema: RevivalArraySchema, options: RevivalO
   return ret
 }
 
-function reviveConstructorAny(data: any, objConstructor: RevivalConstructor, options: RevivalOptions): any {
+function reviveConstructorAny(data: any, objConstructor: RevivalConstructor<any>, options: RevivalOptions): any {
   if (isSchemaProvider(objConstructor)) {
     return reviveAny(data, objConstructor.getReviveSchema(), options)
   }
