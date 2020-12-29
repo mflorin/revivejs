@@ -1,1 +1,1 @@
-export { ReviveOptions, defaultReviveOptions, ReviveConstructor, ReviveSchema, ReviveObjectSchema } from './types'
+export { RevivalOptions, defaultReviveOptions, RevivalConstructor, RevivalSchema, RevivalObjectSchema } from './types'

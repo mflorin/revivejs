@@ -1,39 +1,31 @@
 import {
   defaultReviveOptions,
-  ReviveArraySchema,
-  ReviveConstructor,
-  ReviveObjectSchema,
-  ReviveOptions,
-  ReviveSchema, ReviveSchemaProvider,
+  RevivalArraySchema,
+  RevivalConstructor,
+  RevivalObjectSchema,
+  RevivalOptions,
+  RevivalSchema, RevivalSchemaProvider,
 } from './types';
 
-type ParametricConstructor<T> = new(...args: any[]) => T
 
-interface ParametricObjectSchema<T> extends ReviveObjectSchema {
-  type: ParametricConstructor<T>;
-}
-
-interface ParametricArraySchema<T> extends ReviveArraySchema {
-  items: ParametricSchema<T>
-}
-
-type ParametricSchema<T> = ParametricConstructor<T> | ParametricObjectSchema<T> | ParametricArraySchema<T>
-
-function isParametricObjectSchema<T>(schema: any): schema is ParametricObjectSchema<T> {
+function isObjectSchema<T>(schema: any): schema is RevivalObjectSchema<T> {
   return 'type' in schema && 'properties' in schema
 }
 
-function isParametricArraySchema<T>(schema: any): schema is ParametricArraySchema<T> {
+function isArraySchema<T>(schema: any): schema is RevivalArraySchema<T> {
   return 'items' in schema
 }
 
-function isReviveSchemaProvider(obj: any): obj is ReviveSchemaProvider {
+function isSchemaProvider(obj: any): obj is RevivalSchemaProvider<any> {
   return typeof obj['getReviveSchema'] === 'function'
 }
 
 type Revivable = string | number | {[key: string]: any} | any[]
 
-export function revive<T>(data: Revivable, schema: ParametricSchema<T>, options: ReviveOptions = defaultReviveOptions): T {
+
+export function revive<T>(data: Revivable, schema: RevivalObjectSchema<T>, options: RevivalOptions): T;
+export function revive<T>(data: Revivable, schema: RevivalArraySchema<T>, options: RevivalOptions): T[];
+export function revive<T>(data: Revivable, schema: RevivalArraySchema<T>,options: RevivalOptions = defaultReviveOptions): T {
 
   let obj: any
 
@@ -46,12 +38,12 @@ export function revive<T>(data: Revivable, schema: ParametricSchema<T>, options:
   return reviveAny(obj, schema, options)
 }
 
-function reviveAny(data: any, schema: ReviveSchema, options: ReviveOptions): any {
+function reviveAny(data: any, schema: RevivalSchema, options: RevivalOptions): any {
 
-  if (isParametricObjectSchema(schema)) {
+  if (isObjectSchema(schema)) {
     return reviveObjectAny(data, schema, options)
   } else {
-    if (isParametricArraySchema(schema)) {
+    if (isArraySchema(schema)) {
       return reviveArrayAny(data, schema, options)
     } else {
       return reviveConstructorAny(data, schema, options)
@@ -59,7 +51,7 @@ function reviveAny(data: any, schema: ReviveSchema, options: ReviveOptions): any
   }
 }
 
-function reviveObjectAny(data: any, schema: ReviveObjectSchema, options: ReviveOptions): any {
+function reviveObjectAny(data: any, schema: RevivalObjectSchema, options: RevivalOptions): any {
   let ret
 
   const constructor = schema.type
@@ -136,7 +128,7 @@ function reviveObjectAny(data: any, schema: ReviveObjectSchema, options: ReviveO
   return ret
 }
 
-function reviveArrayAny(data: any, schema: ReviveArraySchema, options: ReviveOptions): any[] {
+function reviveArrayAny(data: any, schema: RevivalArraySchema, options: RevivalOptions): any[] {
   if (!Array.isArray(data)) {
     throw new TypeError(`expected an array, got ${typeof data}`)
   }
@@ -149,8 +141,8 @@ function reviveArrayAny(data: any, schema: ReviveArraySchema, options: ReviveOpt
   return ret
 }
 
-function reviveConstructorAny(data: any, objConstructor: ReviveConstructor, options: ReviveOptions): any {
-  if (isReviveSchemaProvider(objConstructor)) {
+function reviveConstructorAny(data: any, objConstructor: RevivalConstructor, options: RevivalOptions): any {
+  if (isSchemaProvider(objConstructor)) {
     return reviveAny(data, objConstructor.getReviveSchema(), options)
   }
   return reviveObjectAny(data, {type: objConstructor, properties: {}}, options)

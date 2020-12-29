@@ -1,30 +1,30 @@
-export interface ReviveOptions {
+export interface RevivalOptions {
   failOnUnknownFields?: boolean;
   failOnMissingFields?: boolean;
   assignOnly?: boolean;
 }
 
-export const defaultReviveOptions: ReviveOptions = {
+export const defaultReviveOptions: RevivalOptions = {
   failOnUnknownFields: false,
   failOnMissingFields: false,
   assignOnly: false,
 }
 
-export interface ReviveConstructor {
-  new (...args: any[]): any;
+export interface RevivalConstructor<T> {
+  new (...args: any[]): T;
 }
 
-export interface ReviveObjectSchema {
-  type: ReviveConstructor;
-  properties: { [key: string]: ReviveSchema }
+export interface RevivalObjectSchema<T> {
+  type: RevivalConstructor<T>;
+  properties: { [key: string]: RevivalSchema<any> }
 }
 
-export interface ReviveArraySchema {
-  items: ReviveSchema
+export interface RevivalArraySchema<T> {
+  items: RevivalSchema<T>
 }
 
-export type ReviveSchema = ReviveConstructor | ReviveObjectSchema | ReviveArraySchema
+export type RevivalSchema<T> = RevivalConstructor<T> | RevivalObjectSchema<T> | RevivalArraySchema<T>
 
-export interface ReviveSchemaProvider {
-  getReviveSchema(): ReviveSchema
+export interface RevivalSchemaProvider<T> {
+  getReviveSchema(): RevivalSchema<T>
 }

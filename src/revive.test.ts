@@ -1,6 +1,6 @@
-import { assert } from 'chai';
-import {revive} from './revive';
-import {ReviveSchema} from './types';
+import { assert } from 'chai'
+import {revive} from './revive'
+import {RevivalSchema} from './types'
 
 describe('revive tests', () => {
   it('should revive a simple object correctly', () => {
@@ -43,7 +43,7 @@ describe('revive tests', () => {
       }
     }
 
-    const schema: ReviveSchema = {
+    const schema: RevivalSchema = {
       type: Person,
       properties: {
         job: Job,
@@ -88,7 +88,7 @@ describe('revive tests', () => {
       }
     }
 
-    const schema: ReviveSchema = {
+    const schema: RevivalSchema = {
       type: Employee,
       properties: {
         job: {
@@ -105,6 +105,32 @@ describe('revive tests', () => {
     assert.equal(obj.getJob().getProps().getProp1(), prop1)
   })
 
+  it('should revive arrays correctly', () => {
+
+    class Person {
+      name = ''
+      getName() {
+        return this.name
+      }
+    }
+
+    const name1 = 'John Smith'
+    const name2 = 'Jane Doe'
+    const serialized = `[
+      {
+        "name": "${name1}"
+      },
+      {
+        "name": "${name2}"
+      }
+    ]`
+    const schema = {
+      items: Person
+    }
+    const list = revive(serialized, schema)
+    assert.isArray(list)
+    assert.equal((list as Person[])[0].getName(), name1)
+  })
 
   it('should revive nested array schemas correctly', () => {
 
@@ -167,7 +193,7 @@ describe('revive tests', () => {
         return this.friends
       }
 
-      static getReviveSchema(): ReviveSchema {
+      static getReviveSchema(): RevivalSchema {
         return {
           type: Employee,
           properties: {
