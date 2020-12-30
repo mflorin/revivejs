@@ -15,7 +15,7 @@
     "email": "florin.mihalache@gmail.com"
   },
   "scripts": {
-    "test": "mocha --config .mocharc.json --watch src/**/*.test.ts",
+    "test": "mocha --config .mocharc.json src/**/*.test.ts",
     "lint": "eslint src/**/*.ts --fix",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "build": "rimraf ./dist && tsc --build tsconfig.prod.json",
