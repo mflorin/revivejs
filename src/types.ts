@@ -1,13 +1,13 @@
 export interface RevivalOptions {
   failOnUnknownFields?: boolean;
   failOnMissingFields?: boolean;
-  assignOnly?: boolean;
+  noNewObjects?: boolean;
 }
 
 export const defaultReviveOptions: RevivalOptions = {
   failOnUnknownFields: false,
   failOnMissingFields: false,
-  assignOnly: false,
+  noNewObjects: false,
 }
 
 export interface RevivalConstructor<T> {
@@ -26,5 +26,5 @@ export interface RevivalArraySchema<T> {
 export type RevivalSchema<T> = RevivalConstructor<T> | RevivalObjectSchema<T> | RevivalArraySchema<T>
 
 export interface RevivalSchemaProvider<T> {
-  getReviveSchema(): RevivalSchema<T>
+  getRevivalSchema(): RevivalSchema<T>
 }

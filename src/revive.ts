@@ -17,7 +17,7 @@ function isArraySchema<T>(schema: any): schema is RevivalArraySchema<T> {
 }
 
 function isSchemaProvider(obj: any): obj is RevivalSchemaProvider<any> {
-  return typeof obj['getReviveSchema'] === 'function'
+  return typeof obj['getRevivalSchema'] === 'function'
 }
 
 type Revivable = string | number | {[key: string]: any} | any[]
@@ -56,7 +56,7 @@ function reviveObjectAny(data: any, schema: RevivalObjectSchema<any>, options: R
 
   const constructor = schema.type
 
-  if (options.assignOnly) {
+  if (options.noNewObjects) {
     ret = data
     return Object.setPrototypeOf(ret, constructor.prototype)
   }
@@ -143,7 +143,7 @@ function reviveArrayAny(data: any, schema: RevivalArraySchema<any>, options: Rev
 
 function reviveConstructorAny(data: any, objConstructor: RevivalConstructor<any>, options: RevivalOptions): any {
   if (isSchemaProvider(objConstructor)) {
-    return reviveAny(data, objConstructor.getReviveSchema(), options)
+    return reviveAny(data, objConstructor.getRevivalSchema(), options)
   }
   return reviveObjectAny(data, {type: objConstructor, properties: {}}, options)
 }

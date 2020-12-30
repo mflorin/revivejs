@@ -194,7 +194,7 @@ describe('revive tests', () => {
         return this.friends
       }
 
-      static getReviveSchema(): RevivalSchema<Employee> {
+      static getRevivalSchema(): RevivalSchema<Employee> {
         return {
           type: Employee,
           properties: {
