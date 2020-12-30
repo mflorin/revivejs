@@ -46,6 +46,6 @@ jobs:
         
       # Publish it
       - name: Publishing the package
-        uses: JS-DevTools/npm-publish@v1
-        with:
-           token: ${{ secrets.NPM_TOKEN }}
+        env:
+           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish
