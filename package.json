@@ -1,6 +1,6 @@
 {
   "name": "revivejs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Javascript json deserializer library for reviving objects along with their prototype/behavior.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -17,14 +17,13 @@
   "scripts": {
     "test": "mocha --config .mocharc.json src/**/*.test.ts",
     "lint": "eslint src/**/*.ts --fix",
-    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "format": "prettier --write \"src/**/*.ts\"",
     "build": "rimraf ./dist && tsc --build tsconfig.prod.json",
     "start": "npm run start:dev",
     "start:dev": "nodemon --config .nodemonrc.json src/index.ts",
     "start:prod": "npm run build && node dist/index.js",
     "prepublishOnly": "npm run build && npm test && npm run lint",
     "preversion": "npm test && npm run lint",
-    "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags"
   },
   "files": [
