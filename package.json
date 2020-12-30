@@ -1,19 +1,47 @@
 {
-  "name": "tmp",
+  "name": "revivejs",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Javascript json deserializer library for reviving objects along with their prototype/behavior.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": "Florin Mihalache <florin.mihalache@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mflorin/revivejs.git"
+  },
+  "homepage": "https://github.com/mflorin/revivejs",
+  "bugs": {
+    "url": "https://github.com/mflorin/revivejs/issues",
+    "email": "florin.mihalache@gmail.com"
+  },
   "scripts": {
-    "test": "mocha --config .mocharc.json --watch src/**/*.test.ts",
+    "test": "mocha --config .mocharc.json src/**/*.test.ts",
     "lint": "eslint src/**/*.ts --fix",
-    "build": "rimraf ./build && tsc --build tsconfig.prod.json",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "build": "rimraf ./dist && tsc --build tsconfig.prod.json",
     "start": "npm run start:dev",
     "start:dev": "nodemon --config .nodemonrc.json src/index.ts",
-    "start:prod": "npm run build && node build/index.js"
+    "start:prod": "npm run build && node dist/index.js",
+    "prepublishOnly": "npm run build && npm test && npm run lint",
+    "preversion": "npm test && npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "files": [
+    "dist/**/*"
+  ],
+  "keywords": [
+    "javascript",
+    "js",
+    "revive",
+    "serialize",
+    "deserialize",
+    "unmarshal",
+    "typescript",
+    "model",
+    "object"
+  ],
+  "license": "MIT",
   "devDependencies": {
     "@types/chai": "^4.2.14",
     "@types/mocha": "^8.2.0",
@@ -26,8 +54,21 @@
     "lint-staged": "^10.5.3",
     "mocha": "^8.2.1",
     "nodemon": "^2.0.6",
+    "prettier": "^2.2.1",
     "rimraf": "^3.0.2",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "post-commit": "git update-index --again"
+    }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "git add"
+    ]
   }
 }
