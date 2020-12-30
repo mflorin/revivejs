@@ -20,4 +20,18 @@ const person = revive(data, Person)
 person.sayHi() // Hi, I'm John Smith.
 ```
 
+## Install
+
+`ReviveJS` can be installed using npm
+```shell
+$ npm install revivejs
+```
+
+or yarn
+```shell
+$ yarn add revivejs
+```
+
+## Documentation
+
 Please check out the full [Documentation](https://mflorin.gitbook.io/revivejs/) for more details.
