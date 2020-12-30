@@ -48,4 +48,4 @@ jobs:
       - name: Publishing the package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish
+        run: npm publish --access public
