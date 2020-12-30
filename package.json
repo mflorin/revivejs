@@ -9,6 +9,11 @@
     "type": "git",
     "url": "https://github.com/mflorin/revivejs.git"
   },
+  "homepage": "https://github.com/mflorin/revivejs",
+  "bugs": {
+    "url": "https://github.com/mflorin/revivejs/issues",
+    "email": "florin.mihalache@gmail.com"
+  },
   "scripts": {
     "test": "mocha --config .mocharc.json --watch src/**/*.test.ts",
     "lint": "eslint src/**/*.ts --fix",
@@ -29,8 +34,12 @@
     "javascript",
     "js",
     "revive",
-    "deserializer",
-    "unmarshal"
+    "serialize",
+    "deserialize",
+    "unmarshal",
+    "typescript",
+    "model",
+    "object"
   ],
   "license": "MIT",
   "devDependencies": {
