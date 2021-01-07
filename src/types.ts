@@ -23,7 +23,11 @@ export interface RevivalArraySchema<T> {
   items: RevivalSchema<T>
 }
 
-export type RevivalSchema<T> = RevivalConstructor<T> | RevivalObjectSchema<T> | RevivalArraySchema<T>
+export interface RevivalMapSchema<T> {
+  map: RevivalSchema<T>
+}
+
+export type RevivalSchema<T> = RevivalConstructor<T> | RevivalObjectSchema<T> | RevivalArraySchema<T> | RevivalMapSchema<T>
 
 export interface RevivalSchemaProvider<T> {
   getRevivalSchema(): RevivalSchema<T>

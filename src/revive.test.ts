@@ -287,4 +287,32 @@ describe('revive tests', () => {
     const data = 'true'
     assert.throw(() => revive(data, Number), 'expected schema type to be Boolean, got Number')
   })
+
+  it('should revive a map correctly', function () {
+    class Prop {
+      value = 0
+      getValue() { return this.value }
+    }
+    class Person {
+      name = ''
+      props: {[key: string]: Prop} = {}
+      getName() { return this.name }
+      getProps() { return this.props }
+      static getRevivalSchema(): RevivalSchema<Person> {
+        return {
+          type: Person,
+          properties: {
+            props: {
+              map: Prop
+            }
+          }
+        }
+      }
+    }
+    const data= '{"name": "John", "props": {"foo": {"value": 1}, "bar": {"value": 2}}}'
+    const p = revive(data, Person)
+    assert.equal(p.getName(), 'John')
+    assert.equal(p.getProps()['foo'].getValue(), 1)
+    assert.equal(p.getProps()['bar'].getValue(), 2)
+  });
 })

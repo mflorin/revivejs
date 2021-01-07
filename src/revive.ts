@@ -1,12 +1,11 @@
 import {
   defaultReviveOptions,
   RevivalArraySchema,
-  RevivalConstructor,
+  RevivalConstructor, RevivalMapSchema,
   RevivalObjectSchema,
   RevivalOptions,
   RevivalSchema, RevivalSchemaProvider,
 } from './types';
-
 
 function isObjectSchema<T>(schema: any): schema is RevivalObjectSchema<T> {
   return 'type' in schema && 'properties' in schema
@@ -14,6 +13,10 @@ function isObjectSchema<T>(schema: any): schema is RevivalObjectSchema<T> {
 
 function isArraySchema<T>(schema: any): schema is RevivalArraySchema<T> {
   return 'items' in schema
+}
+
+function isMapSchema<T>(schema: any): schema is RevivalMapSchema<T> {
+  return 'map' in schema
 }
 
 function isSchemaProvider(obj: any): obj is RevivalSchemaProvider<any> {
@@ -25,6 +28,7 @@ type Revivable = string | number | {[key: string]: any} | any[]
 export function revive<T>(data: Revivable, schema: RevivalObjectSchema<T>, options?: RevivalOptions): T;
 export function revive<T>(data: Revivable, schema: RevivalArraySchema<T>, options?: RevivalOptions): T[];
 export function revive<T>(data: Revivable, schema: RevivalConstructor<T>, options?: RevivalOptions): T;
+export function revive<T>(data: Revivable, schema: RevivalMapSchema<T>, options?: RevivalOptions): {[key: string]: T};
 export function revive<T>(data: Revivable, schema: RevivalSchema<T>,options: RevivalOptions = defaultReviveOptions): T {
 
   let obj: any
@@ -46,7 +50,11 @@ function reviveAny(data: any, schema: RevivalSchema<any>, options: RevivalOption
     if (isArraySchema(schema)) {
       return reviveArrayAny(data, schema, options)
     } else {
-      return reviveConstructorAny(data, schema, options)
+      if (isMapSchema(schema)) {
+        return reviveMapAny(data, schema, options)
+      } else {
+        return reviveConstructorAny(data, schema, options)
+      }
     }
   }
 }
@@ -62,32 +70,32 @@ function reviveObjectAny(data: any, schema: RevivalObjectSchema<any>, options: R
   }
 
   switch(typeof data) {
-  case 'number':
-    if (schema.type !== Number) {
-      throw new TypeError(`expected schema type to be Number, got ${schema.type.name}`)
-    }
-    return data
-  case 'bigint':
-    if (schema.type !== Number) {
-      throw new TypeError(`expected schema type to be Number, got ${schema.type.name}`)
-    }
-    return data
-  case 'boolean':
-    if (schema.type !== Boolean) {
-      throw new TypeError(`expected schema type to be Boolean, got ${schema.type.name}`)
-    }
-    return data
-  case 'function':
-    throw new TypeError('`function` is not supported')
-  case 'string':
-    if (schema.type !== String) {
-      throw new TypeError(`expected schema type to be String, got ${schema.type.name}`)
-    }
-    return data
-  case 'symbol':
-    throw new TypeError('`symbol` is not supported')
-  case 'undefined':
-    return data
+    case 'number':
+      if (schema.type !== Number) {
+        throw new TypeError(`expected schema type to be Number, got ${schema.type.name}`)
+      }
+      return data
+    case 'bigint':
+      if (schema.type !== Number) {
+        throw new TypeError(`expected schema type to be Number, got ${schema.type.name}`)
+      }
+      return data
+    case 'boolean':
+      if (schema.type !== Boolean) {
+        throw new TypeError(`expected schema type to be Boolean, got ${schema.type.name}`)
+      }
+      return data
+    case 'function':
+      throw new TypeError('`function` is not supported')
+    case 'string':
+      if (schema.type !== String) {
+        throw new TypeError(`expected schema type to be String, got ${schema.type.name}`)
+      }
+      return data
+    case 'symbol':
+      throw new TypeError('`symbol` is not supported')
+    case 'undefined':
+      return data
   }
 
   if (Array.isArray(data)) {
@@ -140,6 +148,33 @@ function reviveArrayAny(data: any, schema: RevivalArraySchema<any>, options: Rev
 
   return ret
 }
+
+function reviveMapAny(data: any, schema: RevivalMapSchema<any>, options: RevivalOptions): any {
+  const ret: {[key: string]: any} = {}
+
+  switch(typeof data) {
+    case 'number':
+    case 'bigint':
+    case 'boolean':
+    case 'function':
+    case 'string':
+    case 'symbol':
+    case 'undefined':
+      throw new TypeError(`expected an object; got an ${typeof data}`)
+  }
+
+  if (Array.isArray(data)) {
+    throw new TypeError('expected object, got array')
+  }
+
+  /* assign values */
+  for (const prop of Object.keys(data)) {
+    ret[prop] = reviveAny(data[prop], schema.map, options)
+  }
+
+  return ret
+}
+
 
 function reviveConstructorAny(data: any, objConstructor: RevivalConstructor<any>, options: RevivalOptions): any {
   if (isSchemaProvider(objConstructor)) {
