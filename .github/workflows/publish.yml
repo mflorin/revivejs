@@ -30,7 +30,7 @@ jobs:
       
       # Install dependencies
       - name: Installing dependencies
-        run: npm install
+        run: npm ci
 
       # Running the linter
       - name: Running the linter
@@ -43,9 +43,13 @@ jobs:
       # Build
       - name: Building the package
         run: npm run build
-        
+      
+      # Setting up .npmrc with the correct token
+      - name: Setting up .npmrc
+        run: echo "//registry.npmjs.org:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+
       # Publish it
       - name: Publishing the package
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --access public
